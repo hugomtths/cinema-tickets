@@ -4,5 +4,5 @@ export interface User {
   senha?: string;
   celular?: string;
   cpf: string;
-  role: 'CLIENT';
+  role: 'USER';
 }

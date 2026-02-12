@@ -129,24 +129,28 @@
 }
 
 button {
-    background-color: #e50914;
+    border: 1px solid var(--secondary-color);
+    border-radius: 0.6rem;
     color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: bold;
+    background-color: var(--secondary-color);
+    width: 9rem;
+    height: 2.4rem;
+    align-self: center;
     cursor: pointer;
-    margin-top: 15px;
-    transition: 0.3s;
+    margin-top: 0.5rem;
 }
 
 button:hover {
-    background-color: #b20710;
+    color: var(--secondary-color);
+    background-color: white;
 }
 
 button:disabled {
-    background-color: #666;
+    opacity: 0.6;
     cursor: not-allowed;
+    background-color: #ccc;
+    border-color: #ccc;
+    color: #666;
 }
 
 .required {

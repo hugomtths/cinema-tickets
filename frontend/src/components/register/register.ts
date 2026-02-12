@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthMock } from '../../auth/mock/auth-mock';
+import { AuthService } from '../../auth/service/auth-service';
 import Swal from 'sweetalert2';
 import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 
@@ -73,10 +73,10 @@ import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
               <div class="form-col">
                 <label>Senha<span class="required">*</span>:</label>
                 <div class="input-group">
-                  <input type="password" placeholder="••••••••••" formControlName="password" [class.loading]="isLoading">
-                  <div *ngIf="password?.invalid && password?.touched" class="error-messages">
-                    <small *ngIf="password?.errors?.['required']">A senha é obrigatória!</small>
-                    <small *ngIf="password?.errors?.['minlength']">Mínimo de 6 caracteres</small>
+                  <input type="password" placeholder="••••••••••" formControlName="senha" [class.loading]="isLoading">
+                  <div *ngIf="senha?.invalid && senha?.touched" class="error-messages">
+                    <small *ngIf="senha?.errors?.['required']">A senha é obrigatória!</small>
+                    <small *ngIf="senha?.errors?.['minlength']">Mínimo de 6 caracteres</small>
                   </div>
                 </div>
               </div>
@@ -98,7 +98,7 @@ import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 })
 
 export class Register {
-  private authService = inject(AuthMock);
+  private authService = inject(AuthService);
   private router = inject(Router);
   registerForm: FormGroup;
   isLoading = false;
@@ -107,16 +107,16 @@ export class Register {
     this.registerForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      senha: ['', [Validators.required, Validators.minLength(6)]],
       celular: [''],
       cpf: ['', [Validators.required, Validators.pattern(/^[0-9]{11}$/)]],
-      role: ['CLIENT']
+      role: ['USER']
     });
   }
 
   get nome() { return this.registerForm.get('nome'); }
   get email() { return this.registerForm.get('email'); }
-  get password() { return this.registerForm.get('password'); }
+  get senha() { return this.registerForm.get('senha'); }
   get celular() { return this.registerForm.get('celular'); }
   get cpf() { return this.registerForm.get('cpf'); }
 
@@ -125,22 +125,39 @@ export class Register {
       this.registerForm.markAllAsTouched();
       return;
     }
+
     this.isLoading = true;
+
+    const payload = {
+      email: this.registerForm.value.email,
+      senha: this.registerForm.value.senha,
+      role: this.registerForm.value.role
+    }
+
     try {
-      const userData = this.registerForm.value;
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      Swal.fire({
-        icon: 'success',
-        title: 'Sucesso!',
-        text: 'Conta criada com sucesso!',
-        confirmButtonColor: '#c91432',
-      });
-      this.router.navigate(['/']);
+      const result = await this.authService.register(payload);
+
+      if (result.success) {
+        await Swal.fire({
+          icon: 'success',
+          title: 'Sucesso!',
+          text: 'Sua conta no Cinema Tickets foi criada!',
+          confirmButtonColor: '#c91432',
+        });
+        this.router.navigate(['/']); // Redireciona para o login
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Ops...',
+          text: "Não foi possível realizar o cadastro",
+          confirmButtonColor: '#c91432',
+        });
+      }
     } catch (e) {
       Swal.fire({
         icon: 'error',
         title: 'Erro',
-        text: 'Erro ao realizar cadastro!',
+        text: 'Não foi possível conectar ao servidor.',
         confirmButtonColor: '#c91432',
       });
     } finally {
