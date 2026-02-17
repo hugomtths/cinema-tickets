@@ -138,7 +138,7 @@ export class Register {
           icon: 'success',
           title: 'Sucesso!',
           text: 'Sua conta no Cinema Tickets foi criada!',
-          confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--sucess').trim(),
+          confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--success').trim(),
         });
         this.router.navigate(['/']); // Redireciona para o login
       } else {
