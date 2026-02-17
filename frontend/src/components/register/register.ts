@@ -132,6 +132,7 @@ export class Register {
 
     try {
       const result = await this.authService.register(this.registerForm.value);
+      const errorMsg = result.message?.includes("could") ? "CPF já cadastrado!" : result.message;
 
       if (result.success) {
         await Swal.fire({
@@ -147,7 +148,7 @@ export class Register {
         Swal.fire({
           icon: 'error',
           title: 'Ops...',
-          text: "Não foi possível realizar o cadastro",
+          text: errorMsg,
           confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--danger').trim(),
         });
         
