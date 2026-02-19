@@ -1,18 +1,26 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-    private apiUrl = 'http://localhost:8080/auth'
-    private registerUrl = 'http://localhost:8080/auth/register'
+
+    constructor(private router: Router) {}
+
+    private apiUrl = 'http://localhost:8080/auth/login';
+    private registerUrl = 'http://localhost:8080/auth/register';
+
+    private authStatus = new BehaviorSubject<boolean>(this.isAuthenticated());
+    authStatus$ = this.authStatus.asObservable();
 
     async login(email: string, password: string): Promise<{success: boolean; message?: string}>{
         try {
             const response = await fetch(this.apiUrl, {
                 method: 'POST',
                 headers: {'Content-Type' : 'application/json'},
-                body: JSON.stringify({email, password}),
+                body: JSON.stringify({email: email, password: password}),
             });
 
             const data = await response.json();
@@ -22,11 +30,12 @@ export class AuthService {
               throw new Error(errorMessage);
             }
 
-            if (!data.token) {
+            if (!data.accessToken) {
               throw new Error('Token não recebido do servidor');
             }
 
-            localStorage.setItem('token', data.token);
+            localStorage.setItem('token', data.accessToken);
+            this.authStatus.next(true);
             return { success: true };
         } catch(e: any) {
             return { 
@@ -41,7 +50,9 @@ export class AuthService {
     }
 
     logout(): void {
+        this.authStatus.next(false);
         localStorage.removeItem('token');
+        this.router.navigate(['']);
     }
 
     getToken(): string | null {
@@ -56,12 +67,12 @@ export class AuthService {
                 body: JSON.stringify(userData),
             });
 
-            const data = await response.json().catch(() => ({}));
-            
             if (!response.ok) {
+              const data = await response.json().catch(() => ({}));
+
               return { 
                 success: false, 
-                message: data.message || data.errors?.[0]?.defaultMessage || 'Erro no servidor' 
+                message: data.detail || 'Erro no servidor' 
               };
             }
 
