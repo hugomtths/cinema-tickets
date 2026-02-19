@@ -36,3 +36,46 @@ input::-ms-clear {
 textarea:read-only {
   background-color: #e9ecef;
 }
+
+@import "@ng-select/ng-select/themes/default.theme.css";
+       
+body .ng-select.custom-select .ng-select-container {
+    height: 42px !important;
+    min-height: 42px !important;
+    border: 1px solid #ccc !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    box-shadow: none !important;
+    font-family: 'Arial', sans-serif !important;
+    font-size: 0.95rem;
+}
+
+body .ng-select.custom-select .ng-value-container {
+    padding-left: 12px !important;
+}
+
+body .ng-select.custom-select .ng-value-container .ng-input > input {
+    padding-left: 0 !important;
+}
+
+body .ng-select.custom-select.ng-select-focused .ng-select-container {
+    border: 2px solid var(--secondary-color) !important;
+}
+
+body .ng-select.custom-select .ng-select-container:after {
+    border-bottom: none !important;
+}
+
+body .ng-select.custom-select .ng-value-container .ng-value,
+body .ng-select.custom-select .ng-value-container .ng-placeholder {
+    color: #333 !important;         
+    font-family: 'Arial', sans-serif !important;
+    padding-left: 2px !important;
+}
+
+body .ng-select.custom-select .ng-dropdown-panel {
+    border-radius: 12px !important;
+    overflow: hidden;
+    border: 1px solid #ccc !important;
+}
