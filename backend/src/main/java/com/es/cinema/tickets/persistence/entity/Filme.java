@@ -4,8 +4,10 @@ import com.es.cinema.tickets.persistence.enums.StatusFilme;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "filmes")
@@ -23,13 +25,51 @@ public class Filme {
     @Column(nullable = false)
     private String titulo;
 
-    @Column(columnDefinition = "TEXT")
-    private String descricao;
-
-    @NotNull
-    @Positive
+    @NotBlank
     @Column(nullable = false)
-    private Integer duracao;
+    private String poster;
+
+    @NotBlank
+    @Column(nullable = false)
+    private String backdrop;
+
+    @NotBlank
+    @Column(nullable = false)
+    private String classificacao;
+
+    @Column(nullable = false)
+    private int duracao;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "filme_generos",
+            joinColumns = @JoinColumn(name = "filme_id", nullable = false)
+    )
+    @Column(name = "genero", nullable = false)
+    @Builder.Default
+    private List<String> generos = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(
+            name = "filme_diretores",
+            joinColumns = @JoinColumn(name = "filme_id", nullable = false)
+    )
+    @Column(name = "diretor", nullable = false)
+    @Builder.Default
+    private List<String> diretores = new ArrayList<>();
+
+    @NotBlank
+    @Column(columnDefinition = "TEXT")
+    private String sinopse;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "filme_elenco",
+            joinColumns = @JoinColumn(name = "filme_id", nullable = false)
+    )
+    @Column(name = "ator", nullable = false)
+    @Builder.Default
+    private List<String> elenco = new ArrayList<>();
 
     @NotNull
     @Enumerated(EnumType.STRING)
